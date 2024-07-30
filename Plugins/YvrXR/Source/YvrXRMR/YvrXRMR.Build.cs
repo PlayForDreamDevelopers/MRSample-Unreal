@@ -12,7 +12,7 @@ public class YvrXRMR : ModuleRules
             new string[] {
                     "YvrXRHMD/Private",
                     "YvrXRInput/Private",
-                    PluginDirectory + "/Include",
+                    PluginDirectory + "/Include"
             }
             );
 
@@ -41,6 +41,7 @@ public class YvrXRMR : ModuleRules
                 "HeadMountedDisplay",
                 "YvrXRHMD",
                 "YvrXRInput",
+                "ProceduralMeshComponent",
             });
     }
 }

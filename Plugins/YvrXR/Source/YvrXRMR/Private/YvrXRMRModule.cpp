@@ -1,5 +1,6 @@
 #include "YvrXRMRModule.h"
 #include "YvrXRAnchorManager.h"
+#include "YvrXrSpaceMeshManager.h"
 
 #define LOCTEXT_NAMESPACE "FYvrXRMRModule"
 
@@ -22,7 +23,9 @@ void FYvrXRMRModule::StartupModule()
 		}
 	}
 
+	FYvrXRSpaceMeshManager::GetInstance()->Initialize(YvrXRHMD);
 	FYvrAnchorManager::GetInstance()->Initialize(YvrXRHMD);
+
 }
 
 void FYvrXRMRModule::ShutdownModule()

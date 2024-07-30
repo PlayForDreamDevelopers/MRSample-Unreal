@@ -510,6 +510,9 @@ bool FYvrXRHMDPlugin::GetOptionalExtensions(TArray<const ANSICHAR*>& OutExtensio
 	OutExtensions.Add(XR_YVR_COLOR_SPACE_EXTENSION_NAME);
 	OutExtensions.Add(XR_YVR_ADAPTIVE_RESOLUTION_EXTENSION_NAME);
 
+	OutExtensions.Add(XR_YVR_SPATIAL_ENTITY_MESH_EXTENSION_NAME);
+	OutExtensions.Add(XR_META_SPATIAL_ENTITY_MESH_EXTENSION_NAME);
+
 	return true;
 }
 
@@ -2543,6 +2546,7 @@ bool FYvrXRHMD::ReadNextEvent(XrEventDataBuffer* buffer)
 	{
 		return true;
 	}
+
 	return false;
 }
 

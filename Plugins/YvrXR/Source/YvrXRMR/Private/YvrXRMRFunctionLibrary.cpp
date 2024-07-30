@@ -2,6 +2,8 @@
 #include "YvrXRAnchorManager.h"
 #include "..\Public\YvrXRMRFunctionLibrary.h"
 
+#include "YvrXrSpaceMeshManager.h"
+
 
 bool UYvrXRMRFunctionLibrary::YvrXRGetAnchorEntityUuid(AActor* BoundActor, FYvrAnchorUUID& OutAnchorUUID)
 {
@@ -111,4 +113,15 @@ bool UYvrXRMRFunctionLibrary::YvrXRGetAnchorBoundingBox3D(AActor* BoundActor, FB
 bool UYvrXRMRFunctionLibrary::YvrXRGetAnchorSemanticLabels(AActor* BoundActor, TArray<FString>& Labels)
 {
 	return FYvrAnchorManager::GetInstance()->GetAnchorSemanticLabels(BoundActor, Labels);
+}
+
+
+bool UYvrXRMRFunctionLibrary::YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent)
+{
+	return FYvrXRSpaceMeshManager::GetInstance()->CreateMeshDetector(SpaceMeshComponent);
+}
+
+bool UYvrXRMRFunctionLibrary::YvrXRDestroyMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent)
+{
+	return FYvrXRSpaceMeshManager::GetInstance()->DestroyMeshDetector(SpaceMeshComponent);
 }

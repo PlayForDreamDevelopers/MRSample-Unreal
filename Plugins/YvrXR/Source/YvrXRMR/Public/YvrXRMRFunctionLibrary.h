@@ -4,7 +4,14 @@
 #include "CoreMinimal.h"
 #include "YvrXRMRTypes.h"
 #include "YvrXRAnchorComponent.h"
+
+
+#include "YvrXRSpaceMeshComponent.h"
+
+
 #include "YvrXRMRFunctionLibrary.generated.h"
+
+
 
 UCLASS()
 class YVRXRMR_API UYvrXRMRFunctionLibrary : public UBlueprintFunctionLibrary
@@ -45,5 +52,11 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "YvrXRLibrary|MR")
 	static bool YvrXRGetAnchorSemanticLabels(AActor* BoundActor, TArray<FString>& Labels);
+
+	UFUNCTION(BlueprintCallable, Category = "YvrXRLibrary|MR")
+	static bool YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent);
+
+	UFUNCTION(BlueprintCallable, Category = "YvrXRLibrary|MR")
+	static bool YvrXRDestroyMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent);
 
 };
