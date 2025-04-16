@@ -33,8 +33,8 @@ The menu is on the left controller, you can turn it on and off through the menu 
 ## Development Environment
 | **Name** | **Version** |
 | ----  |  ----      |
-| Unreal Editor | 4.27 |
-| YVR Unreal SDK | 2.8.0 |
+| Unreal Editor | 5.4.4 |
+| YVR Unreal SDK | 3.0.0 |
 
 ## Licenses
 This project is released under the [MIT License](https://github.com/YVRDeveloper/MRSample-Unreal/blob/main/LICENSE)
