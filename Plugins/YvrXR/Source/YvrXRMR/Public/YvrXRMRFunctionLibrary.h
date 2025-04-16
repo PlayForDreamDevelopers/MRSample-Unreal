@@ -54,7 +54,7 @@ public:
 	static bool YvrXRGetAnchorSemanticLabels(AActor* BoundActor, TArray<FString>& Labels);
 
 	UFUNCTION(BlueprintCallable, Category = "YvrXRLibrary|MR")
-	static bool YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent);
+	static bool YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent, UYvrXRSpaceMeshComponent* SpacePlaneComponent);
 
 	UFUNCTION(BlueprintCallable, Category = "YvrXRLibrary|MR")
 	static bool YvrXRDestroyMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent);

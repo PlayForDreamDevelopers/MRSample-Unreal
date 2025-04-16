@@ -66,7 +66,7 @@ public class YvrLivePreviewService : ModuleRules
             AddEngineThirdPartyPrivateStaticDependencies(Target, "NVAftermath");
         }
 
-        if (Target.Platform == UnrealTargetPlatform.Win32 || Target.Platform == UnrealTargetPlatform.Win64)
+        if (Target.Platform == UnrealTargetPlatform.Win64)
 			{
                 PrivateDependencyModuleNames.AddRange(
                     new string[]

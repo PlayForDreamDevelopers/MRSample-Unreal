@@ -116,9 +116,9 @@ bool UYvrXRMRFunctionLibrary::YvrXRGetAnchorSemanticLabels(AActor* BoundActor, T
 }
 
 
-bool UYvrXRMRFunctionLibrary::YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent)
+bool UYvrXRMRFunctionLibrary::YvrXRCreateMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent, UYvrXRSpaceMeshComponent* SpacePlaneComponent)
 {
-	return FYvrXRSpaceMeshManager::GetInstance()->CreateMeshDetector(SpaceMeshComponent);
+	return FYvrXRSpaceMeshManager::GetInstance()->CreateMeshDetector(SpaceMeshComponent, SpacePlaneComponent);
 }
 
 bool UYvrXRMRFunctionLibrary::YvrXRDestroyMeshDetector(UYvrXRSpaceMeshComponent* SpaceMeshComponent)

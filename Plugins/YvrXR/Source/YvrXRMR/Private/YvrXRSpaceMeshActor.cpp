@@ -8,7 +8,7 @@ AYvrXRSpaceMeshActor::AYvrXRSpaceMeshActor()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CustomScene"));
+	USceneComponent* SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("MeshScene"));
 	RootComponent = SceneComponent;
 	SceneComponent->SetVisibility(true);
 }
@@ -20,48 +20,29 @@ void AYvrXRSpaceMeshActor::BeginPlay()
 }
 
 
-void AYvrXRSpaceMeshActor::UpdateMesh(TArray< FVector > Vertices, TArray< int32 > Triangles,  bool MeshVisible, bool CreateCollision)
+void AYvrXRSpaceMeshActor::UpdateMesh(TArray<FVector> Vertices, TArray<int32> Triangles,  bool bMeshVisible, bool bCreateCollision)
 {
 	if (!ProceduralMesh)
 	{
 		ProceduralMesh = Cast<UProceduralMeshComponent>(this->AddComponentByClass(UProceduralMeshComponent::StaticClass(), false, FTransform::Identity, false));
 		ProceduralMesh->SetupAttachment(RootComponent);
 		ProceduralMesh->RegisterComponent();
-
-		LineBatcher = Cast<ULineBatchComponent>(this->AddComponentByClass(ULineBatchComponent::StaticClass(), false, FTransform::Identity, false));
-		LineBatcher->SetupAttachment(RootComponent);
-		LineBatcher->RegisterComponent();
+		UMaterial* MeshMaterial = Cast<UMaterial>(StaticLoadObject(UMaterial::StaticClass(), NULL, TEXT("Material'/YvrXR/Materials/MeshMaterial.MeshMaterial'")));
+		UMaterialInstanceDynamic* DynamicMaterial = UMaterialInstanceDynamic::Create(MeshMaterial, NULL);
+		ProceduralMesh->SetMaterial(0, DynamicMaterial);
 	}
-	else {
-		ProceduralMesh->ClearMeshSection(0);
-		LineBatcher->Flush();
-	}
-
-	MyVertices = Vertices;
-	MyTriangles = Triangles;
-	MyMeshVisible = MeshVisible;
-	MyCreateCollision = CreateCollision;
-	ProceduralMesh->CreateMeshSection(0, MyVertices, MyTriangles, Normals, UV, VertexColors, Tangents, MyCreateCollision);
-	ProceduralMesh->SetMeshSectionVisible(0, false);
-	LineBatcher->SetVisibility(MyMeshVisible);
-
-	LineBatcher->BatchedLines.SetNum(MyTriangles.Num());
-
-	for (int i = 0; i < MyTriangles.Num(); i = i + 3)
+	else
 	{
-		FVector a = GetTransform().TransformPosition(MyVertices[MyTriangles[i]]);
-		FVector b = GetTransform().TransformPosition(MyVertices[MyTriangles[i + 1]]);
-		FVector c = GetTransform().TransformPosition(MyVertices[MyTriangles[i + 2]]);
-		FBatchedLine linea(a, b, FColor(255.0f, 0.0f, 0.0f), 0, 0.1f, 0.f);
-		FBatchedLine lineb(b, c, FColor(255.0f, 0.0f, 0.0f), 0, 0.1f, 0.f);
-		FBatchedLine linec(a, c, FColor(255.0f, 0.0f, 0.0f), 0, 0.1f, 0.f);
-		LineBatcher->BatchedLines[i] = linea;
-		LineBatcher->BatchedLines[i + 1] = lineb;
-		LineBatcher->BatchedLines[i + 2] = linec;
+		ProceduralMesh->ClearMeshSection(0);
 	}
 
-	LineBatcher->MarkRenderStateDirty();
-
+	TArray<FVector> Normals;
+	TArray<FVector2D> UV;
+	TArray<FColor> VertexColors;
+	TArray<FProcMeshTangent> Tangents;
+	
+	ProceduralMesh->CreateMeshSection(0, Vertices, Triangles, Normals, UV, VertexColors, Tangents, bCreateCollision);
+	ProceduralMesh->SetMeshSectionVisible(0, bMeshVisible);
 }
 
 // Called every frame

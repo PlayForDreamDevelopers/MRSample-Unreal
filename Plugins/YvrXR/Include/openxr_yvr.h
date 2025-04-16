@@ -156,7 +156,8 @@ typedef XrResult(XRAPI_PTR *PFN_xrGetSystemPropertyFloatArrayYVR)(XrSession sess
                                                                   int *numArrayValues);
 typedef XrResult(XRAPI_PTR *PFN_xrSetSystemPropertyIntYVR)(XrSession session, const xrSetSystemPropertyYVR propType, int propData);
 typedef XrResult(XRAPI_PTR *PFN_xrSetSystemPropertyFloatYVR)(XrSession session, const xrSetSystemPropertyYVR propType, float propData);
-
+typedef XrResult(XRAPI_PTR *PFN_xrSetSystemPropertyFloatArrayYVR)(XrSession session, const xrSetSystemPropertyYVR propType, float *propDatas,
+                                                                  int numArrayValues);
 #ifndef XR_NO_PROTOTYPES
 #ifdef XR_EXTENSION_PROTOTYPES
 XRAPI_ATTR XrResult XRAPI_CALL xrGetSystemPropertyIntYVR(XrSession session, const xrGetSystemPropertyYVR propType, int *propData);
@@ -165,6 +166,8 @@ XRAPI_ATTR XrResult XRAPI_CALL xrGetSystemPropertyFloatArrayYVR(XrSession sessio
                                                                 int *numArrayValues);
 XRAPI_ATTR XrResult XRAPI_CALL xrSetSystemPropertyIntYVR(XrSession session, const xrSetSystemPropertyYVR propType, int propData);
 XRAPI_ATTR XrResult XRAPI_CALL xrSetSystemPropertyFloatYVR(XrSession session, const xrSetSystemPropertyYVR propType, float propData);
+XRAPI_ATTR XrResult XRAPI_CALL xrSetSystemPropertyFloatArrayYVR(XrSession session, const xrSetSystemPropertyYVR propType, float *propDatas,
+                                                                  int numArrayValues);
 #endif
 #endif
 
@@ -515,19 +518,97 @@ typedef struct XrEventDataMeshBlockUpdateYVR {
     XrMeshBlockChangeStateYVR   changeState;
 } XrEventDataMeshBlockUpdateYVR;
 
+
+typedef enum XrPlaneChangeStateYVR {
+    XR_PLANE_CHANGE_STATE_ADDED_YVR = 0,
+    XR_PLANE_CHANGE_STATE_UPDATED_YVR = 1,
+    XR_PLANE_CHANGE_STATE_REMOVED_YVR = 2,
+    XR_PLANE_CHANGE_STATE_UNCHANGED_YVR = 3,
+    XR_PLANE_CHANGE_STATE_MAX_ENUM_YVR = 0x7FFFFFFF
+} XrPlaneChangeStateYVR;
+
+//XrPlaneDetectorCreateInfoYVR extends XrMeshDetectorCreateInfoYVR
+XR_STRUCT_ENUM(XR_TYPE_PLANE_DETECTOR_CREATE_INFO_YVR, 1000514010);
+typedef struct XrPlaneDetectorCreateInfoYVR {
+    XrStructureType             type;
+    const void* XR_MAY_ALIAS    next;
+} XrPlaneDetectorCreateInfoYVR;
+
+XR_STRUCT_ENUM(XR_TYPE_EVENT_DATA_PLANE_UPDATE_YVR, 1000514011);
+typedef struct XrEventDataPlaneUpdateYVR {
+    XrStructureType             type;
+    void* XR_MAY_ALIAS          next;
+    XrSpace                     Space;
+} XrEventDataPlaneUpdateYVR;
+
+XR_STRUCT_ENUM(XR_TYPE_PLANE_DETECTOR_GET_INFO_YVR, 1000514012);
+typedef struct XrPlaneDetectorGetInfoYVR {
+    XrStructureType             type;
+    const void* XR_MAY_ALIAS    next;
+    XrSpace                     baseSpace;
+    XrTime                      time;
+} XrPlaneDetectorGetInfoYVR;
+
+XR_STRUCT_ENUM(XR_TYPE_PLANE_DETECTOR_LOCATION_YVR, 1000514013);
+typedef struct XrPlaneDetectorLocationYVR {
+    XrStructureType                   type;
+    void* XR_MAY_ALIAS                next;
+    uint64_t                          planeId;
+    XrSpaceLocationFlags              locationFlags;
+    XrPosef                           pose;
+    XrExtent2Df                       extents;
+    XrPlaneDetectorOrientationEXT     orientation;
+    XrPlaneDetectorSemanticTypeEXT    semanticType;
+    XrPlaneChangeStateYVR             changeState;
+    uint32_t                          polygonBufferCount;
+} XrPlaneDetectorLocationYVR;
+
+XR_STRUCT_ENUM(XR_TYPE_PLANE_DETECTOR_LOCATIONS_YVR, 1000514014);
+typedef struct XrPlaneDetectorLocationsYVR {
+    XrStructureType                type;
+    void* XR_MAY_ALIAS             next;
+    uint32_t                       planeLocationCapacityInput;
+    uint32_t                       planeLocationCountOutput;
+    XrPlaneDetectorLocationYVR*    planeLocations;
+} XrPlaneDetectorLocationsYVR;
+
+XR_STRUCT_ENUM(XR_TYPE_PLANE_DETECTOR_POLYGON_BUFFER_YVR, 1000514015);
+typedef struct XrPlaneDetectorPolygonBufferYVR {
+    XrStructureType       type;
+    void* XR_MAY_ALIAS    next;
+    uint32_t              vertexCapacityInput;
+    uint32_t              vertexCountOutput;
+    XrVector2f*           vertices;
+} XrPlaneDetectorPolygonBufferYVR;
+
 typedef XrResult (XRAPI_PTR *PFN_xrCreateMeshDetectorYVR)(XrSession session, const XrMeshDetectorCreateInfoYVR* createInfo, XrMeshDetectorYVR* meshDetector);
 typedef XrResult (XRAPI_PTR *PFN_xrDestroyMeshDetectorYVR)(XrMeshDetectorYVR meshDetector);
+typedef XrResult (XRAPI_PTR *PFN_xrGetPlaneDetectionsYVR)(XrMeshDetectorYVR meshDetector, const XrPlaneDetectorGetInfoYVR* info, XrPlaneDetectorLocationsYVR* locations);
+typedef XrResult (XRAPI_PTR *PFN_xrGetPlanePolygonBufferYVR)(XrMeshDetectorYVR meshDetector, uint64_t planeId, uint32_t polygonBufferIndex, XrPlaneDetectorPolygonBufferYVR* polygonBuffer);
 
 #ifndef XR_NO_PROTOTYPES
 #ifdef XR_EXTENSION_PROTOTYPES
 XRAPI_ATTR XrResult XRAPI_CALL xrCreateMeshDetectorYVR(
-    XrSession session, 
-    const XrMeshDetectorCreateInfoYVR* createInfo, 
+    XrSession session,
+    const XrMeshDetectorCreateInfoYVR* createInfo,
     XrMeshDetectorYVR* meshDetector);
 XRAPI_ATTR XrResult XRAPI_CALL xrDestroyMeshDetectorYVR(
     XrMeshDetectorYVR meshDetector);
+
+XRAPI_ATTR XrResult XRAPI_CALL xrGetPlaneDetectionsYVR(XrMeshDetectorYVR meshDetector, const XrPlaneDetectorGetInfoYVR* info,
+    XrPlaneDetectorLocationsYVR* locations);
+XRAPI_ATTR XrResult XRAPI_CALL xrGetPlanePolygonBufferYVR(XrMeshDetectorYVR meshDetector,uint64_t planeId,
+    uint32_t  polygonBufferIndex,XrPlaneDetectorPolygonBufferYVR*  polygonBuffer);
 #endif /* XR_EXTENSION_PROTOTYPES */
 #endif /* !XR_NO_PROTOTYPES */
+
+
+XR_STRUCT_ENUM(XR_TYPE_LOCATEVIEW_FRUSTUMROTATION_YVR, 1000515001);
+typedef struct XrLocateViewFrustumRotationYVR {
+    XrStructureType             type;
+    bool                        frustumRotation;
+    void* XR_MAY_ALIAS          next;
+} XrLocateViewFrustumRotationYVR;
 
 // clang-format on
 

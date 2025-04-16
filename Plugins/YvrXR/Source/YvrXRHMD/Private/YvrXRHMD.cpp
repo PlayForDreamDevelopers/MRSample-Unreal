@@ -32,6 +32,7 @@
 #include "PixelShaderUtils.h"
 #include "ScreenRendering.h"
 #include "Interfaces/IPluginManager.h"
+#include "DataDrivenShaderPlatformInfo.h"
 
 #if PLATFORM_ANDROID
 #include <android_native_app_glue.h>
@@ -1134,10 +1135,10 @@ void FYvrXRHMD::SetTrackingOrigin(EHMDTrackingOrigin::Type NewOrigin)
 {
 	switch (NewOrigin)
 	{
-	case EHMDTrackingOrigin::Eye:
+	case EHMDTrackingOrigin::Local:
 		TrackingSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL;
 		break;
-	case EHMDTrackingOrigin::Floor:
+	case EHMDTrackingOrigin::LocalFloor:
 		TrackingSpaceType = XR_REFERENCE_SPACE_TYPE_LOCAL_FLOOR_EXT;
 		break;
 	case EHMDTrackingOrigin::Stage:
@@ -1151,14 +1152,14 @@ void FYvrXRHMD::SetTrackingOrigin(EHMDTrackingOrigin::Type NewOrigin)
 
 EHMDTrackingOrigin::Type FYvrXRHMD::GetTrackingOrigin() const
 {
-	EHMDTrackingOrigin::Type TrackingOrigin = EHMDTrackingOrigin::Eye;
+	EHMDTrackingOrigin::Type TrackingOrigin = EHMDTrackingOrigin::Local;
 	switch (TrackingSpaceType)
 	{
 	case XR_REFERENCE_SPACE_TYPE_LOCAL:
-		TrackingOrigin = EHMDTrackingOrigin::Eye;
+		TrackingOrigin = EHMDTrackingOrigin::Local;
 		break;
 	case XR_REFERENCE_SPACE_TYPE_LOCAL_FLOOR_EXT:
-		TrackingOrigin = EHMDTrackingOrigin::Floor;
+		TrackingOrigin = EHMDTrackingOrigin::LocalFloor;
 		break;
 	case XR_REFERENCE_SPACE_TYPE_STAGE:
 		TrackingOrigin = EHMDTrackingOrigin::Stage;
@@ -2012,6 +2013,10 @@ bool FYvrXRHMD::AllocateRenderTargetTexture(uint32 Index, uint32 SizeX, uint32 S
 	// We need to ensure we can sample from the texture in CopyTexture
 	TargetableTextureFlags |= TexCreate_ShaderResource;
 
+	TargetableTextureFlags |= TexCreate_ResolveTargetable;
+
+	TargetableTextureFlags |= TexCreate_RenderTargetable;
+
 	// On mobile without HDR all render targets need to be marked sRGB
 	bool MobileHWsRGB = IsMobileColorsRGB() && IsMobilePlatform(GMaxRHIShaderPlatform);
 	if (MobileHWsRGB)
@@ -2142,6 +2147,11 @@ bool FYvrXRHMD::AllocateFoveationTexture(uint32 Index, uint32 RenderSizeX, uint3
 #endif
 {
 	FXRSwapChainPtr& FoveationSwapchain = PipelinedLayerStateRendering.FoveationSwapchain;
+
+#if ENGINE_MAJOR_VERSION > 4
+	//TODO: Fix GRHIVariableRateShadingImageFormat issue
+	GRHISupportsAttachmentVariableRateShading = false;
+#endif
 
 	if(!FoveationSwapchain)
 	{
@@ -2823,9 +2833,14 @@ void FYvrXRHMD::OnFinishRendering_RHIThread()
 					Projection->type = XR_TYPE_COMPOSITION_LAYER_PROJECTION;
 					Projection->next = nullptr;
 					Projection->layerFlags = XR_COMPOSITION_LAYER_BLEND_TEXTURE_SOURCE_ALPHA_BIT;
+#if ENGINE_MAJOR_VERSION > 4
+					Projection->layerFlags |= XR_COMPOSITION_LAYER_INVERTED_ALPHA_BIT_EXT;
+#endif
 					if (!bIsMobileHDREnabled)
 					{
+#if ENGINE_MAJOR_VERSION < 5
 						Projection->layerFlags |= XR_COMPOSITION_LAYER_UNPREMULTIPLIED_ALPHA_BIT;
+#endif
 					}
 					Projection->space = PipelinedFrameStateRHI.TrackingSpace->Handle;
 					Projection->viewCount = PipelinedLayerStateRHI.ProjectionLayers.Num();

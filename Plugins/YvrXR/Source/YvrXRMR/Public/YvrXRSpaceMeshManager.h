@@ -15,7 +15,7 @@ public:
 
 	static FYvrXRSpaceMeshManager* GetInstance();
 	void Initialize(FYvrXRHMD* InYvrXRHMD);
-	bool CreateMeshDetector(UYvrXRSpaceMeshComponent* inSpaceMeshComponent);
+	bool CreateMeshDetector(UYvrXRSpaceMeshComponent* InSpaceMeshComponent, UYvrXRSpaceMeshComponent* InSpacePlaneComponent);
 	bool DestroyMeshDetector(UYvrXRSpaceMeshComponent* inSpaceMeshComponent);
 
 private:
@@ -26,6 +26,8 @@ private:
 	FYvrXRSpaceMeshManager();
 	~FYvrXRSpaceMeshManager();
 
-	UYvrXRSpaceMeshComponent* SpaceMeshComponent;
+	XrMeshDetectorYVR MeshDetector;
 
+	UYvrXRSpaceMeshComponent* SpaceMeshComponent;
+	UYvrXRSpaceMeshComponent* SpacePlaneComponent;
 };

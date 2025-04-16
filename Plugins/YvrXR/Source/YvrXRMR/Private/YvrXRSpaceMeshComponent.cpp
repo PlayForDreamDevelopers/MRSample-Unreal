@@ -3,7 +3,6 @@
 #include "YvrXRSpaceMeshComponent.h"
 #include "openxr.h"
 
-
 // Sets default values for this component's properties
 UYvrXRSpaceMeshComponent::UYvrXRSpaceMeshComponent()
 {
@@ -24,12 +23,12 @@ void UYvrXRSpaceMeshComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 }
 
-void UYvrXRSpaceMeshComponent::UpdateMeshState( FYvrAnchor key, TArray< FVector > MyVertices,  TArray< int32 > MyTriangles, FTransform Base)
+void UYvrXRSpaceMeshComponent::UpdateMeshState(FYvrAnchor key, TArray<FVector> MyVertices, TArray<int32> MyTriangles, FTransform Base)
 {
-	if (Meshs.Contains(key))
+	if (Meshes.Contains(key))
 	{
-		Meshs[key]->SetActorTransform(Base);
-		Meshs[key]->UpdateMesh(MyVertices, MyTriangles, MeshVisible, CreateCollision);
+		Meshes[key]->SetActorTransform(Base);
+		Meshes[key]->UpdateMesh(MyVertices, MyTriangles, MeshVisible, CreateCollision);
 	}
 	else
 	{
@@ -37,25 +36,57 @@ void UYvrXRSpaceMeshComponent::UpdateMeshState( FYvrAnchor key, TArray< FVector 
 		AYvrXRSpaceMeshActor* MyActor = (AYvrXRSpaceMeshActor*)GetWorld()->SpawnActor<AYvrXRSpaceMeshActor>();
 		MyActor->SetActorTransform(Base);
 		MyActor->UpdateMesh(MyVertices, MyTriangles, MeshVisible, CreateCollision);
-		Meshs.Add(key, MyActor);
+		Meshes.Add(key, MyActor);
 	}
 }
 
-void UYvrXRSpaceMeshComponent::RemoveMeshs()
+void UYvrXRSpaceMeshComponent::UpdatePlaneState(uint64 key, TArray<FVector> MyVertices, TArray<int32> MyTriangles, FTransform Base)
 {
-	for (TMap<FYvrAnchor, AYvrXRSpaceMeshActor*>::TConstIterator iter = Meshs.CreateConstIterator(); iter; ++iter)
+	if (Planes.Contains(key))
 	{
-		iter->Value->Destroy();
+		Planes[key]->SetActorTransform(Base);
+		Planes[key]->UpdateMesh(MyVertices, MyTriangles, MeshVisible, CreateCollision);
+
 	}
-	Meshs.Empty();
+	else
+	{
+		FActorSpawnParameters SpawnInfo;
+		AYvrXRSpaceMeshActor* MyActor = (AYvrXRSpaceMeshActor*)GetWorld()->SpawnActor<AYvrXRSpaceMeshActor>();
+		MyActor->SetActorTransform(Base);
+		MyActor->UpdateMesh(MyVertices, MyTriangles, MeshVisible, CreateCollision);
+		Planes.Add(key, MyActor);
+	}
+}
+
+void UYvrXRSpaceMeshComponent::RemovePlane(uint64 key)
+{
+	if (Planes.Contains(key))
+	{
+		Planes[key]->Destroy();
+		Planes.Remove(key);
+	}
 }
 
 void UYvrXRSpaceMeshComponent::RemoveMesh(FYvrAnchor key)
 {
-
-	if (Meshs.Contains(key))
+	if (Meshes.Contains(key))
 	{
-		Meshs[key]->Destroy();
-		Meshs.Remove(key);
+		Meshes[key]->Destroy();
+		Meshes.Remove(key);
 	}
+}
+
+void UYvrXRSpaceMeshComponent::RemoveAll()
+{
+	for (TMap<FYvrAnchor, AYvrXRSpaceMeshActor*>::TConstIterator iter = Meshes.CreateConstIterator(); iter; ++iter)
+	{
+		iter->Value->Destroy();
+	}
+	Meshes.Empty();
+
+	for (TMap<uint64, AYvrXRSpaceMeshActor*>::TConstIterator iter = Planes.CreateConstIterator(); iter; ++iter)
+	{
+		iter->Value->Destroy();
+	}
+	Planes.Empty();
 }

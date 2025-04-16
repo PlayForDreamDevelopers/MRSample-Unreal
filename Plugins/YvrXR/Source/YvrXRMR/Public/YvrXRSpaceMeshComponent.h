@@ -12,8 +12,6 @@
 
 #include "YvrXRSpaceMeshActor.h"
 
-
-
 #include "YvrXRSpaceMeshComponent.generated.h"
 
 
@@ -34,17 +32,18 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//UFUNCTION(BlueprintCallable, Category = "YvrXRLibrary|MR")
-
-	void UpdateMeshState(FYvrAnchor key, TArray< FVector > MyVertices, TArray< int32 > MyTriangles, FTransform Base);
-
+	// Mesh interface
+	void UpdateMeshState(FYvrAnchor key, TArray<FVector> MyVertices, TArray<int32> MyTriangles, FTransform Base);
 	void RemoveMesh(FYvrAnchor key);
-	void RemoveMeshs();
 
+	// Plane interface
+	void UpdatePlaneState(uint64 key, TArray<FVector> MyVertices, TArray<int32> MyTriangles, FTransform Base);
+	void RemovePlane(uint64 key);
+	
+	void RemoveAll();
 
-	XrMeshDetectorYVR meshDetector;
-
-	TMap<FYvrAnchor, AYvrXRSpaceMeshActor*> Meshs;
+	TMap<FYvrAnchor, AYvrXRSpaceMeshActor*> Meshes;
+	TMap<uint64, AYvrXRSpaceMeshActor*> Planes;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool MeshVisible;
