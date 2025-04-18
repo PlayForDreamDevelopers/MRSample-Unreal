@@ -27,6 +27,8 @@ The menu is on the left controller, you can turn it on and off through the menu 
 * Start Capture: evoke the space setup tool for space calibration
 * Load Scene:  load local device anchors and and Generate Spatial Anchor Actor, create 2d and 3d actors and modify the scale to create the scene
 * Remove Scene Display: Loop through all 2d and 3d actors and destroy it
+* Enable Marker: When the equipment is aligned with the marking points, it can display the matching grids.
+* Disable Marker: Return to the default scene and clear the grid.
 * Restart: Resets the level
 * Real life: Quit the game
 
